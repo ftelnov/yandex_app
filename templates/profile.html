@@ -4,7 +4,20 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                {{ token }}
+                <div class="card">
+
+                    <div class="card-body">
+                        <h2 class="card-title">{{nickname}}</h2>
+                        <span class="section-title-line"></span>
+                        <h2 class="card-title">{{token}}</h2>
+                        <form method="post">
+                            <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home mt-md-2"
+                                   name="sign-out" value="Log Out">
+                            <input type="submit" class="btn btn-danger btn-sm icofont icofont-ui-home mt-md-2"
+                                   name="delete-account" value="Delete account">
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

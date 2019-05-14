@@ -62,9 +62,21 @@ class Comment(DB.Model):
     text = DB.Column(DB.String)
 
 
-@app.route('/profile', methods=['GET'])
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html', token=session.get('token'))
+    if not session.get('token'):
+        return redirect('/login')
+    user = DB.session.query(User).filter_by(token=session.get('token')).first()
+    if request.method == 'GET':
+        return render_template('profile.html', nickname=user.login, token=user.token)
+    elif request.method == 'POST':
+        if request.form.get('sign-out'):
+            session['token'] = ''
+        if request.form.get('delete-account'):
+            DB.session.delete(user)
+            DB.session.commit()
+            session['token'] = ''
+        return redirect('/login')
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -100,7 +112,7 @@ def signin():
         nickname = request.form.get('nickname')
         password = request.form.get('password')
         result = post(build_url('/api/auth'),
-                      data={'login': nickname, 'password': password}).json()
+                      data={'login': nickname, 'password': sha256(password)}).json()
         if result.get('token'):
             session['token'] = result.get('token')
             return redirect('/profile')
