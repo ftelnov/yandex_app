@@ -35,7 +35,7 @@ class User(DB.Model):
 # класс задачи в базе данных
 class Task(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор задачи
-    title = DB.Column(DB.String)  # категория задачи
+    title = DB.Column(DB.String)  # заголовок задачи
     text = DB.Column(DB.Text)  # суть задачи
     user_id = DB.Column(DB.Integer)  # идентификатор создателя задачи
     alive = DB.Column(DB.Boolean, default=True)  # жива ли задача
@@ -78,15 +78,40 @@ def signup():
 
 
 # ------------------------- Api Methods -------------------------
-@app.route('/api/get', methods=['POST'])
-def users_get():
+@app.route('/api/title/set', methods=['POST'])
+def title_set():
     parser = reqparse.RequestParser()
-    parser.add_argument('id')
+    parser.add_argument('token')
+    parser.add_argument('task_id')
+    parser.add_argument('title')
     result = parser.parse_args()
-    if not result.id:
-        return jsonify({'Error': 701})
-    result = DB.session.query(User).filter_by(id=result.id).all()
-    return jsonify(json_list=result)
+    if not result.token or not result.task_id or not result.title:
+        return jsonify({'Result': 'One of requirement parameters is missing!'})
+    user = DB.session.query(User).filter_by(token=result.token).first()
+    if not user:
+        return jsonify({'Result': 'Such user does not exist!'})
+    task = DB.session.query(Task).filter_by(user_id=user.id, id=int(result.task_id)).first()
+    if not task:
+        return jsonify({'Result': 'There are no such tasks!'})
+    task.title = result.title
+    DB.session.commit()
+    return jsonify({'Result': 'Successfully done!'})
+
+
+@app.route('/api/title/get', methods=['GET'])
+def title_get():
+    token = request.args.get('token')
+    title = request.args.get('title')
+    task_id = request.args.get('task_id')
+    if not token or not task_id or not title:
+        return jsonify({'Result': 'One of requirement parameters is missing!'})
+    user = DB.session.query(User).filter_by(token=token).first()
+    if not user:
+        return jsonify({'Result': 'Such user does not exist!'})
+    task = DB.session.query(Task).filter_by(user_id=user.id, id=int(task_id)).first()
+    if not task:
+        return jsonify({'Result': 'There are no such tasks!'})
+    return jsonify({'Result': 'Successfully done!', 'Title': task.title})
 
 
 @app.route('/api/reg', methods=['POST'])
@@ -233,8 +258,6 @@ def timer():
         refl.alive = False
         DB.session.commit()
     return jsonify({'Result': 'Successfully proceeded!'})
-
-
 
 
 if __name__ == '__main__':
