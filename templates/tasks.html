@@ -1,0 +1,35 @@
+{% extends "default.html" %}
+{% block header %}
+
+    <section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
+                    <div class="section-title text-center mt-md-5">
+                        <span class="badge badge-danger">TASKS</span>
+                        <h2>Welcome to Your Tasks!</h2>
+                        <span class="section-title-line"></span>
+                    </div>
+                    <form action="/add-task" class="mt-md-5 text-center">
+                        <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home" value="Add Task">
+                    </form>
+                    <span class="section-title-line"></span></div>
+                <div class="row">
+                    {% for task in tasks %}
+                        <div class="col-md-4 col-sm-12">
+                            <div class="card theme-card blog-card">
+                                <div class="card-body">
+                                    <h6><a class="text-gray underlining-none"
+                                           href="article/{{ task['id'] }}">{{ task['title'] }}</a></h6>
+                                    <p class="clip">{{ task['text'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

@@ -3,7 +3,7 @@ from flask_restful import Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
 from secure import *
-from requests import post
+from requests import post, get
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -30,6 +30,9 @@ class User(DB.Model):
     password = DB.Column(DB.String(120), unique=False, nullable=False)  # пароль пользователя
     token = DB.Column(DB.String, unique=True, nullable=False)  # токен пользователя
     admin = DB.Column(DB.Boolean)  # флаг аккаунта
+    first_name = DB.Column(DB.String)  # имя
+    second_name = DB.Column(DB.String)  # фамилия
+    third_name = DB.Column(DB.String)  # отчетво
 
 
 # класс задачи в базе данных
@@ -38,7 +41,7 @@ class Task(DB.Model):
     title = DB.Column(DB.String)  # заголовок задачи
     text = DB.Column(DB.Text)  # суть задачи
     user_id = DB.Column(DB.Integer)  # идентификатор создателя задачи
-    alive = DB.Column(DB.Boolean, default=True)  # жива ли задача
+    alive = DB.Column(DB.Integer, default=1)  # жива ли задача
 
 
 # класс категории в базе данных
@@ -53,7 +56,7 @@ class Timer(DB.Model):
     task_id = DB.Column(DB.Integer)  # айди задачи
     time_start = DB.Column(DB.Date)  # время старта
     time_end = DB.Column(DB.Date)  # время окончания
-    alive = DB.Column(DB.Boolean)  # живой ли таймер
+    alive = DB.Column(DB.Integer, default=1)  # живой ли таймер
 
 
 class Comment(DB.Model):
@@ -89,10 +92,14 @@ def signup():
         nickname = request.form.get('nickname')
         password = request.form.get('password')
         password_confirm = request.form.get('password_submit')
+        first = request.form.get('first_name')
+        second = request.form.get('second_name')
+        third = request.form.get('third_name')
         if password != password_confirm:
             return render_template('signup.html')
         result = post(build_url('/api/reg'),
-                      data={'login': nickname, 'password': password}).json()
+                      data={'login': nickname, 'password': password, 'first': first, 'second': second,
+                            'third': third}).json()
         if result.get('token'):
             session['token'] = result.get('token')
             return redirect('/profile')
@@ -120,6 +127,35 @@ def signin():
                             {res}
                             </div>'''.format(res=result['Result'])
         return render_template('signin.html', response=alert)
+
+
+@app.route('/tasks', methods=['GET'])
+def tasks():
+    token = session.get('token')
+    if not token:
+        return redirect('/signin')
+    result = get(build_url('/api/task'), params={'token': token}).json()
+    if result.get('json_list'):
+        return render_template('tasks.html', tasks=result['json_list'])
+    return render_template('tasks.html')
+
+
+@app.route('/add-task', methods=['GET', 'POST'])
+def add_task():
+    token = session.get('token')
+    if not token:
+        return redirect('/signin')
+    if request.method == 'GET':
+        return render_template('write-task.html')
+    else:
+        title = request.form.get('title')
+        text = request.form.get('text')
+        time = request.form.get('time')
+        category = request.form.get('category')
+        result = post(build_url('/api/task'), data={'token': token, 'title': title, 'text': text, 'Category': category}).json()
+        result_2 = post(build_url('/api/task/id/timer'),
+                        data={'token': token, 'time': time, 'timer': 1, 'task_id': result['Id']}).json()
+        return redirect('/tasks')
 
 
 # обработчик 404-ошибки
@@ -182,11 +218,15 @@ def users_reg():
     parser = reqparse.RequestParser()
     parser.add_argument('login')
     parser.add_argument('password')
+    parser.add_argument('first')
+    parser.add_argument('second')
+    parser.add_argument('third')
     result = parser.parse_args()
     if not result.login or not result.password:
         return jsonify({'Result': 'One of requirement parameters is missing!'})
     user = User(login=result.login, password=sha256(result.password),
-                token=get_token(result.login, result.password), admin=False)
+                token=get_token(result.login, result.password), admin=False, first_name=result.first,
+                second_name=result.second, third_name=result.third)
     try:
         DB.session.add(user)
         DB.session.commit()
@@ -245,7 +285,7 @@ def get_all_tasks():
             category = Category(peer_id=task.id, title=result.category)
             DB.session.add(category)
             DB.session.commit()
-        return jsonify({'Result': 'Added successfully'})
+        return jsonify({'Result': 'Added successfully', 'Id': task.id})
 
 
 @app.route('/api/task/id', methods=['GET', 'PUT', 'DELETE'])
