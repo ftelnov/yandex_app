@@ -1,0 +1,275 @@
+/*
+Template Name: Soft Themez - Software Landing Page Template
+Author: Askbootstrap
+Author URI: https://themeforest.net/user/askbootstrap
+Version: 1.0
+*/
+/*
+	-- Navbar
+	-- Section
+	-- Login 
+	-- Slider
+	-- Footer
+*/ 
+/* Navbar */
+ .navbar-top .fa-windows{
+     color:#2D8AF2;
+}
+ .navbar-top .fa-apple{
+     color:#000000;
+}
+ .navbar-top .fa-android{
+     color:#A5CA39;
+}
+ .navbar-top p {
+     margin: 2px 0 0;
+}
+ .navbar-top {
+     background: #fff none repeat scroll 0 0;
+     border-bottom: 1px solid #e0e0e0;
+}
+ .navbar-top {
+     background: #fff none repeat scroll 0 0;
+}
+ .navbar-top span, .navbar-top p {
+     text-transform: uppercase;
+}
+ .navbar-top li {
+     border-left: 1px solid #e0e0e0;
+     margin: 0;
+     padding: 6px 10px 5px 14px;
+}
+ .navbar-top .list-inline {
+     border-right: 1px solid #e0e0e0;
+     margin: 0;
+     padding: 0;
+}
+ .bg-primary::after {
+     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+}
+ header.bg-primary, header .navbar {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#5a7ce2+0,8283e8+50,5c5de8+51,565bd8+71,575cdb+100 */
+     background: #5a7ce2;
+    /* Old browsers */
+     background: -moz-linear-gradient(-45deg, #5a7ce2 0%, #8283e8 50%, #5c5de8 51%, #565bd8 71%, #575cdb 100%);
+    /* FF3.6-15 */
+     background: -webkit-linear-gradient(-45deg, #5a7ce2 0%,#8283e8 50%,#5c5de8 51%,#565bd8 71%,#575cdb 100%);
+    /* Chrome10-25,Safari5.1-6 */
+     background: linear-gradient(135deg, #5a7ce2 0%,#8283e8 50%,#5c5de8 51%,#565bd8 71%,#575cdb 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5a7ce2', endColorstr='#575cdb',GradientType=1 );
+    /* IE6-9 fallback on horizontal gradient */
+     background-size: 400% 400%;
+     padding: 7px 0;
+	 z-index: 99;
+}
+ .menu-btn {
+     font-size: 13px;
+     font-stretch: normal;
+     font-style: normal;
+     font-weight: 500;
+     letter-spacing: normal;
+     line-height: 41px;
+     margin: 0 0 0 16px;
+     padding: 11px 22px;
+     text-align: left;
+     text-transform: uppercase;
+}
+ .inner-navbar .menu-btn {
+     background-color: #ffffff;
+     color: #3f345f;
+}
+ header .navbar .nav-item .nav-link {
+     font-size: 12px;
+     font-weight: 600;
+     padding: 11px;
+     color:#fff;
+     text-transform: uppercase;
+}
+ .inner-navbar .nav-link {
+     color: #fff !important;
+}
+ .navbar-top p, .navbar-top a, .navbar-top p, .navbar-top {
+     color: #656565;
+     font-size: 12px;
+}
+/* Section */
+ section {
+     padding: 80px 0;
+}
+ .section-title {
+     padding-bottom: 50px;
+}
+ .features-item {
+     border-radius: 10px;
+     box-shadow: 0 0 21px rgba(204, 204, 204, 0.6);
+     padding: 35px;
+     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+}
+/* Login */
+ #login .form-control {
+     border-color: #fff;
+     border-radius: 0;
+     box-shadow: 0 0 24px rgba(91, 94, 222, 0.16);
+     font-size: 13px;
+     padding: 16px 20px;
+}
+ #login .modal-header {
+     padding: 23px 40px;
+}
+ #login .modal-body {
+     padding: 35px 40px 43px;
+}
+/* Slider */
+ .carousel-item {
+     height: 600px;
+     min-height: 300px;
+     background: no-repeat center center scroll;
+     -webkit-background-size: cover;
+     -moz-background-size: cover;
+     -o-background-size: cover;
+     background-size: cover;
+}
+ .carousel .carousel-caption {
+     bottom: 0;
+     max-width: 580px;
+     top: 136px;
+}
+/* Footer */
+ .contact-footer ul {
+     margin: 0;
+     padding: 0;
+}
+ .contact-footer ul li {
+     line-height: 32px;
+     list-style: outside none none;
+     padding: 0 0 0 29px;
+     position: relative;
+}
+ .contact-footer ul li .fa {
+     left: 0;
+     position: absolute;
+     top: 9px;
+}
+ .footer {
+     background-color: rgba(115, 178, 255, 0.06);
+     padding: 89px 0;
+     border-top: 3px solid rgba(65, 77, 91, 0.1);
+}
+ .footer h6 {
+     color: #3f345f;
+     font-size: 18px;
+     font-stretch: normal;
+     font-style: normal;
+     font-weight: 600;
+     letter-spacing: normal;
+     line-height: 2.22;
+}
+ .footer li {
+     list-style: outside none none;
+     line-height: 32px;
+}
+ .footer ul {
+     margin: 0;
+     padding: 0;
+}
+ .footer li a {
+     color: #3f345f;
+     font-size: 14px;
+     font-stretch: normal;
+     font-style: normal;
+     font-weight: normal;
+     letter-spacing: normal;
+     line-height: 2;
+     opacity: 0.8;
+     transition: all 300ms linear 0s;
+}
+ .contact-footer .fa {
+     margin: 0 8px 0 0;
+     text-align: center;
+     width: 16px;
+}
+
+/* Mobile Media */
+ @media (min-width: 0px) and (max-width: 767px) {
+	.navbar-toggler-icon {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\'rgba(255, 255, 255, 0.5)\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E") !important;
+	}
+	.navbar-toggler {
+		background: #000 none repeat scroll 0 0;
+		border-radius: 2px;
+		padding: 3px 7px;
+	}
+	.container {
+		max-width: 100%;
+	}
+
+	.menu-btn {
+		display: inline-block;
+		font-size: 12px;
+		margin: 20px 0 0;
+		padding: 11px 21px;
+		text-align: center;
+		width: 100%;
+	}
+	header.bg-primary, header .navbar {
+		padding: 7px 10px;
+	}
+	header .navbar .nav-item .nav-link {
+		text-align: center;
+	}
+	.navbar-top  {
+		display: none;
+	}
+	.carousel-item {
+		background: rgba(0, 0, 0, 0) none no-repeat scroll center center / cover ;
+		height: 180px;
+		min-height: 190px;
+	}
+	.mt-5 {
+		margin-top: 0 !important;
+	}
+}
+ @media (min-width: 768px) and (max-width: 1023px) {
+	.navbar-toggler-icon {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\'rgba(255, 255, 255, 0.5)\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E") !important;
+	}
+	.navbar-toggler {
+		background: #000 none repeat scroll 0 0;
+		border-radius: 2px;
+		padding: 3px 7px;
+	}
+	.container {
+		max-width: 100%;
+	}
+	.menu-btn {
+		display: inline-block;
+		font-size: 12px;
+		margin: 20px 0 0;
+		padding: 11px 21px;
+		text-align: center;
+		width: 100%;
+	}
+	header.bg-primary, header .navbar {
+		padding: 7px 10px;
+	}
+	header .navbar .nav-item .nav-link {
+		text-align: center;
+	}
+	.navbar-top .list-inline li:last-child {
+		display: none;
+	}
+	.carousel .carousel-caption {
+		left: 50px;
+	}
+}
+@media (min-width: 1024px) and (max-width: 1200px) {
+	.container {
+		max-width: 100%;
+	}
+	header .navbar .nav-item .nav-link {
+		font-size: 11px !important;
+		padding:10px 7px !important;
+	}
+}
+/* End Mobile Media */
