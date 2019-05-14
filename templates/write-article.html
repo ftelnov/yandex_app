@@ -1,0 +1,26 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="image-upload">
+                        <label for="file-input">
+                            <img id="result-image" src="static/img/user/1.jpg">
+                        </label>
+                        <input id="file-input" type="file" name="image">
+                    </div>
+                    <input type="text" class="form-control text-primary mt-md-5" name="title"
+                           placeholder="Title.." minlength="1" maxlength="50" required>
+                    <textarea name="text" class="form-control text-primary mt-md-3" rows="10" cols="60"
+                              placeholder="Text.." minlength="1"></textarea>
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="Submit" value="Submit">
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

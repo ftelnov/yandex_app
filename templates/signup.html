@@ -1,0 +1,26 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
+                <form method="post">
+                    <input type="text" class="form-control text-primary" name="nickname"
+                           placeholder="Type nickname here.." minlength="3" maxlength="30" required>
+                    <input type="password" class="form-control mt-md-3 text-primary" name="password"
+                           placeholder="Type password here.." minlength="8" required
+                           pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$">
+                    <input type="password" class="form-control mt-md-3 text-primary" name="password_submit"
+                           placeholder="Confirm password.." minlength="8" required
+                           pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$">
+                    {{ response|safe}}
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="sign-up" value="Sign Up">
+                </form>
+                <h6 class="text-white mt-md-4"> Have an account already? <a href="/signin" class="text-warning"><u>Sign
+                    In</u></a></h6></div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

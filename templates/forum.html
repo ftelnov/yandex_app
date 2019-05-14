@@ -1,0 +1,52 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pd-4 mt-md-5 ml-5 mr-5 mx-auto">
+    <div class="container card" style="width: 75%">
+        <div class="section-title text-center mt-md-5">
+            <span class="badge badge-danger">FORUM</span>
+            <h2>Welcome to Forum!</h2>
+            <span class="section-title-line"></span>
+        </div>
+        <form action="/write-article" class="mt-md-5 text-center">
+            <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home" value="Write">
+        </form>
+        <div class="row">
+            {% for article in articles %}
+            <div class="col-md-4 col-sm-12">
+                <div class="card theme-card blog-card">
+                    <a href="#"><img class="card-img-top" src="../{{article['article-image']}}"></a>
+                    <div class="card-body">
+                        <h6><a class="text-gray underlining-none"
+                               href="article/{{article['id']}}">{{article['title']}}</a></h6>
+                        <p class="clip">{{article['text']}}</p>
+                        <div class="blog-author">
+                            <p><img class="rounded-circle" src="../{{ article['profile-image'] }}">
+                                <a href="/user/{{article['author']}}"><strong>{{article['author']}}</strong></a>
+                                On {{article['create-month']}} {{article['create-day']}}, {{article['create-year']}}
+                            <div class="row" id="{{article['id']}};{{nickname}}" onclick={like(this)} style="cursor: pointer;" onload="like(this)">
+                                {% if article['id'] in likes %}
+                                    <img id="{{article['id']}};{{nickname}};img" src="../static/img/like.png" style="display: inline; float: left;">
+                                    <div class="text-danger h4" id="{{article['id']}};{{nickname}};text" style="display: inline; float: left;">
+                                        {% if article['likes_count'] != 0 %}
+                                        {{article['likes_count']}}
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <img id="{{article['id']}};{{nickname}};img" src="../static/img/non-like.png" style="display: inline; float: left;">
+                                    <div class="text-capitalize h4" id="{{article['id']}};{{nickname}};text" style="display: inline; float: left;">
+                                        {% if article['likes_count'] != 0 %}
+                                        {{article['likes_count']}}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

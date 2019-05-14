@@ -1,0 +1,20 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pt-4 pb-5 error-page-main-inner">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 block-404 text-center section-title">
+                <h1><img class="img-fluid" src="../static/img/404.png" alt="404"></h1>
+                <h1 class="text-white">Sorry! Page not found.</h1>
+                <div class="mt-5">
+                    <form method="get" action="/start">
+                        <input type="submit" class="btn btn-primary btn-lg icofont icofont-ui-home"
+                               name="go-home" value="Вернуться на стартовую страницу">
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

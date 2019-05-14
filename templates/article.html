@@ -1,0 +1,44 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pd-4 mt-md-5 ml-5 mr-5 mx-auto section success-story-block">
+    <div class="section blog-image">
+        <img class="img-fluid wf" src="../{{article['article-image']}}" alt="">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class="blog-dediated-block">
+                    <div class="blog-status">
+                        <div class="blog-date text-center">
+                            <strong>{{article['create-month']}}, {{article['create-day']}}</strong><br>{{article['create-year']}}
+                        </div>
+                        <div class="blog-time text-center">
+                            <img src="../static/img/clock.png" alt="Card image cap"><br>
+                            <strong>{{article['read-time']}} min</strong>
+                        </div>
+                    </div>
+                    <h2>{{article['title']}}</h2>
+                    <p class="text-primary" style="word-break: break-all;">{{article['text']}}</p>
+                </div>
+                <form method="post" class="mt-md-5">
+                    <textarea name="text" class="form-control text-primary mt-md-3" rows="5" cols="60"
+                              placeholder="Text.." minlength="10"></textarea>
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="sign-in" value="Send">
+                </form>
+                {% for comment in comments %}
+                <div class="blog-dediated-block mt-md-2">
+                    <div class="blog-status">
+                        <div class="blog-date text-center">
+                            <strong>{{comment['create_month']}}, {{comment['create_day']}}</strong><br>{{comment['create_year']}}
+                        </div>
+                    </div>
+                    <h2><a href="/user/{{comment['author']|safe}}">{{comment['author']}}</a></h2>
+                    <p class="text-primary" style="word-break: break-all;">{{comment['text']}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

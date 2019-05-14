@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_restful import Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
@@ -62,19 +62,70 @@ class Comment(DB.Model):
     text = DB.Column(DB.String)
 
 
-@app.route('/signup', methods=['POST', 'GET'])
+@app.route('/profile', methods=['GET'])
+def profile():
+    return render_template('profile.html', token=session.get('token'))
+
+
+@app.route('/register', methods=['POST', 'GET'])
 def signup():
     if request.method == 'GET':
+        if session.get('token'):
+            return redirect('/profile')
         return render_template('signup.html')
     elif request.method == 'POST':
         nickname = request.form.get('nickname')
         password = request.form.get('password')
-        phone = request.form.get('number')
-        account_type = 1 if request.form.get('superuser') else 0
-        result = post(build_url('/api/users/register'),
-                      data={'nickname': nickname, 'password': password, 'phone': phone, 'type': account_type})
-        print(result.json())
-        return render_template('signup.html')
+        password_confirm = request.form.get('password_submit')
+        if password != password_confirm:
+            return render_template('signup.html')
+        result = post(build_url('/api/reg'),
+                      data={'login': nickname, 'password': password}).json()
+        if result.get('token'):
+            session['token'] = result.get('token')
+            return redirect('/profile')
+        alert = '''<div class="alert alert-danger text-left mt-md-2 pd-1" role="alert">
+                            {res}
+                            </div>'''.format(res=result['Result'])
+        return render_template('signup.html', response=alert)
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def signin():
+    if request.method == 'GET':
+        if session.get('token'):
+            return redirect('/profile')
+        return render_template('signin.html')
+    elif request.method == 'POST':
+        nickname = request.form.get('nickname')
+        password = request.form.get('password')
+        result = post(build_url('/api/auth'),
+                      data={'login': nickname, 'password': password}).json()
+        if result.get('token'):
+            session['token'] = result.get('token')
+            return redirect('/profile')
+        alert = '''<div class="alert alert-danger text-left mt-md-2 pd-1" role="alert">
+                            {res}
+                            </div>'''.format(res=result['Result'])
+        return render_template('signin.html', response=alert)
+
+
+# обработчик 404-ошибки
+@app.errorhandler(404)
+def error_404(error):
+    return render_template('not-found.html')
+
+
+# дефолтная страница
+@app.route('/', methods=['GET'])
+def default():
+    return redirect('/start')
+
+
+# стартовая страничка
+@app.route('/start', methods=['GET'])
+def index():
+    return render_template('index.html')
 
 
 # ------------------------- Api Methods -------------------------
@@ -122,7 +173,7 @@ def users_reg():
     result = parser.parse_args()
     if not result.login or not result.password:
         return jsonify({'Result': 'One of requirement parameters is missing!'})
-    user = User(nickname=result.nickname, password=sha256(result.password),
+    user = User(login=result.login, password=sha256(result.password),
                 token=get_token(result.login, result.password), admin=False)
     try:
         DB.session.add(user)
@@ -163,6 +214,7 @@ def get_all_tasks():
         parser.add_argument('token')
         parser.add_argument('text')
         parser.add_argument('category')
+        parser.add_argument('title')
         result = parser.parse_args()
         if not result.token:
             return jsonify({'Result': 'Token param is missing!'})
@@ -171,7 +223,7 @@ def get_all_tasks():
         user = DB.session.query(User).filter_by(token=result.token).first()
         if not user:
             return jsonify({'Result': 'There are no such user!'})
-        task = Task(text=result.text, user_id=user.id)
+        task = Task(text=result.text, user_id=user.id, title=result.title)
         try:
             DB.session.add(task)
             DB.session.commit()

@@ -1,0 +1,45 @@
+{% extends "default.html" %}
+{% block header %}
+<section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
+                <div class="card">
+                    <img src="../{{image_file}}" style="border-radius: 50%" width="200" height="200" class="mx-auto">
+
+                    <div class="card-body">
+                        <h2 class="card-title">{{nickname}}</h2>
+                        <span class="section-title-line"></span>
+                        <p class="card-text">
+                            <strong>Level: </strong><span class="text-primary h5 mt-5">{{level}}</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{exp}}%">
+                                {% if exp_point != 0 %}
+                                    {{exp_point}}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" class="mt-md-5">
+                    <textarea name="text" class="form-control text-primary mt-md-3" rows="5" cols="60"
+                              placeholder="Text.." minlength="10"></textarea>
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="sign-in" value="Send">
+                </form>
+                {% for comment in comments %}
+                <div class="blog-dediated-block mt-md-2">
+                    <div class="blog-status">
+                        <div class="blog-date text-center">
+                            <strong>{{comment['create_month']}}, {{comment['create_day']}}</strong><br>{{comment['create_year']}}
+                        </div>
+                    </div>
+                    <h2><a href="/user/{{comment['author']|safe}}">{{comment['author']}}</a></h2>
+                    <p class="text-primary" style="word-break: break-all;">{{comment['text']}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
