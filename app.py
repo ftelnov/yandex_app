@@ -35,6 +35,7 @@ class User(DB.Model):
 # класс задачи в базе данных
 class Task(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор задачи
+    title = DB.Column(DB.String)  # категория задачи
     text = DB.Column(DB.Text)  # суть задачи
     user_id = DB.Column(DB.Integer)  # идентификатор создателя задачи
     alive = DB.Column(DB.Boolean, default=True)  # жива ли задача
@@ -232,6 +233,9 @@ def timer():
         refl.alive = False
         DB.session.commit()
     return jsonify({'Result': 'Successfully proceeded!'})
+
+
+
 
 if __name__ == '__main__':
     DB.create_all()
