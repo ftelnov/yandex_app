@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from settings import *
 from secure import *
 from requests import post
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 # настраиваем конфиги
@@ -36,6 +37,28 @@ class Task(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор задачи
     text = DB.Column(DB.Text)  # суть задачи
     user_id = DB.Column(DB.Integer)  # идентификатор создателя задачи
+    alive = DB.Column(DB.Boolean, default=True)  # жива ли задача
+
+
+# класс категории в базе данных
+class Category(DB.Model):
+    id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор категории
+    peer_id = DB.Column(DB.Integer)  # назначение категории
+    title = DB.Column(DB.String)  # заголовок категории
+
+
+class Timer(DB.Model):
+    id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор таймера
+    task_id = DB.Column(DB.Integer)  # айди задачи
+    time_start = DB.Column(DB.Date)  # время старта
+    time_end = DB.Column(DB.Date)  # время окончания
+    alive = DB.Column(DB.Boolean)  # живой ли таймер
+
+
+class Comment(DB.Model):
+    id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор комментария
+    peer_id = DB.Column(DB.Integer)
+    text = DB.Column(DB.String)
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -113,9 +136,12 @@ def get_all_tasks():
         parser = reqparse.RequestParser()
         parser.add_argument('token')
         parser.add_argument('text')
+        parser.add_argument('category')
         result = parser.parse_args()
-        if not result.token or not result.text:
-            return jsonify({'Result': 'One of requirement parameters is missing!'})
+        if not result.token:
+            return jsonify({'Result': 'Token param is missing!'})
+        if not result.text:
+            return jsonify({'Result': 'Text param is missing!'})
         user = DB.session.query(User).filter_by(token=result.token).first()
         if not user:
             return jsonify({'Result': 'There are no such user!'})
@@ -125,6 +151,10 @@ def get_all_tasks():
             DB.session.commit()
         except Exception as exc:
             return jsonify({'Result': 'This task already exist!'})
+        if result.category:
+            category = Category(peer_id=task.id, title=result.category)
+            DB.session.add(category)
+            DB.session.commit()
         return jsonify({'Result': 'Added successfully'})
 
 
@@ -171,6 +201,37 @@ def get_task():
         DB.session.delete(task)
         return jsonify({'Result': 'Task successfully deleted!'})
 
+
+@app.route('/api/task/id/timer', methods=['POST'])
+def timer():
+    token = request.args.get('token')
+    task_id = request.args.get('task_id')
+    flag = request.args.get('timer')
+    time = request.args.get('time')
+    if not task_id or not token or not time:
+        return jsonify({'Result': 'One of requirement parameters is missing!'})
+    user = DB.session.query(User).filter_by(token=token).first()
+    if not user:
+        return jsonify({'Result': 'Such user does not exist!'})
+    task = DB.session.query(Task).filter_by(user_id=user.id, id=int(task_id)).first()
+    if not task:
+        return jsonify({'Result': 'There are no such task!'})
+    if flag:
+        refl = DB.session.query.filter_by(task_id=task_id).first()
+        now = datetime.now()
+        end = now + timedelta(minutes=time)
+        if not refl:
+            new_timer = Timer(task_id=task_id, time_start=now, time_end=end)
+            DB.session.add(new_timer)
+        else:
+            refl.time_start = now
+            refl.time_end = end
+        DB.session.commit()
+    else:
+        refl = DB.session.query.filter_by(task_id=task_id).first()
+        refl.alive = False
+        DB.session.commit()
+    return jsonify({'Result': 'Successfully proceeded!'})
 
 if __name__ == '__main__':
     DB.create_all()
