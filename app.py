@@ -43,6 +43,16 @@ class Task(DB.Model):
     user_id = DB.Column(DB.Integer)  # идентификатор создателя задачи
     alive = DB.Column(DB.Integer, default=1)  # жива ли задача
 
+    def serialize(self):
+        result = {
+            'id': self.id,
+            'title': self.title,
+            'text': self.text,
+            'user_id': self.user_id,
+            'alive': self.alive
+        }
+        return result
+
 
 # класс категории в базе данных
 class Category(DB.Model):
@@ -63,6 +73,16 @@ class Comment(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор комментария
     peer_id = DB.Column(DB.Integer)
     text = DB.Column(DB.String)
+
+
+@app.route('/admin/task-categories', methods=['GET', 'POST'])
+def categories_admin():
+    if request.method == 'GET':
+        if not session.get('token') or not DB.session.query(User).filter_by(admin=True,
+                                                                            token=session.get('token')).first():
+            return redirect('/login')
+        categories = DB.session.query(Category).all()
+        return render_template('categories.html', categories=categories)
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -133,7 +153,7 @@ def signin():
 def tasks():
     token = session.get('token')
     if not token:
-        return redirect('/signin')
+        return redirect('/login')
     result = get(build_url('/api/task'), params={'token': token}).json()
     if result.get('json_list'):
         return render_template('tasks.html', tasks=result['json_list'])
@@ -152,7 +172,8 @@ def add_task():
         text = request.form.get('text')
         time = request.form.get('time')
         category = request.form.get('category')
-        result = post(build_url('/api/task'), data={'token': token, 'title': title, 'text': text, 'Category': category}).json()
+        result = post(build_url('/api/task'),
+                      data={'token': token, 'title': title, 'text': text, 'category': category}).json()
         result_2 = post(build_url('/api/task/id/timer'),
                         data={'token': token, 'time': time, 'timer': 1, 'task_id': result['Id']}).json()
         return redirect('/tasks')
@@ -259,7 +280,7 @@ def get_all_tasks():
         if not user:
             return jsonify({'Result': 'Such user does not exist!'})
         tasks = DB.session.query(Task).filter_by(user_id=user.id).all()
-        return jsonify(json_list=tasks)
+        return jsonify({'json_list': list(map(lambda x: x.serialize(), tasks))})
 
     elif request.method == 'POST':
         parser = reqparse.RequestParser()
@@ -298,13 +319,14 @@ def get_task():
         user = DB.session.query(User).filter_by(token=token).first()
         if not user:
             return jsonify({'Result': 'Such user does not exist!'})
-        task = DB.session.query(Task).filter_by(user_id=user.id, id=int(task_id)).all()
-        return jsonify(json_list=task)
+        task = DB.session.query(Task).filter_by(user_id=user.id, id=int(task_id)).first()
+        return jsonify(task.serialize())
 
     elif request.method == 'PUT':
         task_id = request.args.get('id')
         token = request.args.get('token')
         text = request.args.get('text')
+        title = request.args.get('title')
         if not token or not task_id or not text:
             return jsonify({'Result': 'One of requirement parameters is missing!'})
         user = DB.session.query(User).filter_by(token=token).first()
@@ -314,6 +336,7 @@ def get_task():
         if not task:
             return jsonify({'Result': 'There are no such task!'})
         task.text = text
+        task.title = title
         DB.session.commit()
         return jsonify({'Result': 'Successfully!'})
 
@@ -366,4 +389,9 @@ def timer():
 
 if __name__ == '__main__':
     DB.create_all()
+    if not DB.session.query(User).filter_by(admin=True).first():
+        admin = User(login='admin', password=sha256('password'), token=get_token('admin', 'password'), admin=True,
+                     first_name='Admin', second_name='Admin', third_name='Admin')
+        DB.session.add(admin)
+        DB.session.commit()
     app.run(host=HOST, port=PORT, threaded=True)
